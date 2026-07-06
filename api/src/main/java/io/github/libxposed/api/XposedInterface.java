@@ -282,9 +282,8 @@ public interface XposedInterface {
      * }</pre>
      */
     interface Hooker {
-        // for API 100, the hooker interface is just a marker interface.
-        // The actual hook logic is implemented in the static methods annotated with @BeforeInvocation and @AfterInvocation.
-        // for API 101, the hooker interface is defined by modules and the actual hook logic is implemented in the intercept method.
+        @XposedApiMin(101)
+        Object intercept(@NonNull Chain chain) throws Throwable;
     }
 
     /**
