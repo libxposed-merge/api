@@ -620,6 +620,22 @@ public interface XposedInterface {
          */
         @NonNull
         HookHandle intercept(@NonNull Hooker hooker);
+
+        /**
+         * Sets a unique id for the hook, default to {@code null}. An id is used for exclusively identifying
+         * a hook in the same module on the executable. A new hook with the same id in the same module on
+         * the executable will replace the old one atomically, and the old hook handle will be invalid.
+         * Hook ids are isolated between modules.
+         *
+         * <p>The hook chain is snapshot based. Replacing or adding a hook while a call is running does not
+         * affect that in-flight call.</p>
+         *
+         * @param id The id for the hook. It can be null if you don't care about replacing the hook later.
+         * @return The builder itself for chaining
+         */
+        @SinceApi(API_102)
+        @XposedApiMin(102)
+        HookBuilder setId(@Nullable String id);
     }
 
     /**
