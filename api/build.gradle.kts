@@ -12,7 +12,7 @@ android {
     enableKotlin = false
 
     defaultConfig {
-        minSdk = 26
+        minSdk = 24
         consumerProguardFiles("proguard-rules.pro")
     }
 
