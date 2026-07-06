@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import io.github.libxposed.api.annotations.XposedApiMin;
 import io.github.libxposed.api.error.HookFailedError;
 import io.github.libxposed.annotation.SinceApi;
 
@@ -34,6 +35,7 @@ public interface XposedInterface {
      * <li>This is the first API version.</li>
      * </ul>
      */
+    @XposedApiMin(101)
     int API_101 = 101;
 
     /**
@@ -49,56 +51,68 @@ public interface XposedInterface {
      * <li>Libxposed modules can not call legacy {@code de.robv.android.xposed} APIs.</li>
      * </ul>
      */
+    @XposedApiMin(102)
     int API_102 = 102;
 
     /**
      * The API version of this <b>library</b>. This is a static value for the framework.
      * Modules should use {@link #getApiVersion()} to check the API version at runtime.
      */
+    @XposedApiMin(101)
     int LIB_API = API_102;
 
     /**
      * The framework has the capability to hook system_server and other system processes.
      */
+    @XposedApiMin(101)
     long PROP_CAP_SYSTEM = 1L;
     /**
      * The framework provides remote preferences and remote files support.
      */
+    @XposedApiMin(101)
     long PROP_CAP_REMOTE = 1L << 1;
     /**
      * The framework disallows accessing Xposed API via reflection or dynamically loaded code.
      */
+    @XposedApiMin(101)
     long PROP_RT_API_PROTECTION = 1L << 2;
 
     /**
      * The default hook priority.
      */
+    @XposedApiMin(101)
     int PRIORITY_DEFAULT = 50;
     /**
      * Execute at the end of the interception chain.
      */
+    @XposedApiMin(101)
     int PRIORITY_LOWEST = Integer.MIN_VALUE;
     /**
      * Execute at the beginning of the interception chain.
      */
+    @XposedApiMin(101)
     int PRIORITY_HIGHEST = Integer.MAX_VALUE;
 
     /**
      * Invoker for a method or constructor. Invocations through invokers will bypass access checks.
      */
+    @XposedApiMin(101)
     interface Invoker<T extends Invoker<T, U>, U extends Executable> {
         /**
          * Type of the invoker, which determines the hook chain to be invoked
          */
+        @XposedApiMin(101)
         sealed interface Type permits Type.Origin, Type.Chain {
             /**
              * A convenience constant for {@link Origin}.
              */
+            @XposedApiMin(101)
             Origin ORIGIN = new Origin();
 
             /**
              * Invokes the original executable, skipping all hooks.
              */
+            @XposedApiMin(101)
             record Origin() implements Type {
             }
 
@@ -108,10 +122,12 @@ public interface XposedInterface {
              *
              * @param maxPriority The maximum priority of hooks to include in the chain
              */
+            @XposedApiMin(101)
             record Chain(int maxPriority) implements Type {
                 /**
                  * Invoking the executable with full hook chain.
                  */
+                @XposedApiMin(101)
                 public static final Chain FULL = new Chain(PRIORITY_HIGHEST);
             }
         }
@@ -119,6 +135,7 @@ public interface XposedInterface {
         /**
          * Sets the type of the invoker, which determines the hook chain to be invoked
          */
+        @XposedApiMin(101)
         T setType(@NonNull Type type);
 
         /**
@@ -131,6 +148,7 @@ public interface XposedInterface {
          * <p>For void methods and constructors, always returns {@code null}.</p>
          * @see Method#invoke(Object, Object...)
          */
+        @XposedApiMin(101)
         Object invoke(Object thisObject, Object... args) throws InvocationTargetException, IllegalArgumentException, IllegalAccessException;
 
         /**
@@ -148,6 +166,7 @@ public interface XposedInterface {
          * <p>For void methods and constructors, always returns {@code null}.</p>
          * @see Method#invoke(Object, Object...)
          */
+        @XposedApiMin(101)
         Object invokeSpecial(@NonNull Object thisObject, Object... args) throws InvocationTargetException, IllegalArgumentException, IllegalAccessException;
     }
 
@@ -156,6 +175,7 @@ public interface XposedInterface {
      *
      * @param <T> The type of the constructor
      */
+    @XposedApiMin(101)
     interface CtorInvoker<T> extends Invoker<CtorInvoker<T>, Constructor<T>> {
         /**
          * Creates a new instance through the hook chain determined by the invoker's type.
@@ -165,6 +185,7 @@ public interface XposedInterface {
          * @see Constructor#newInstance(Object...)
          */
         @NonNull
+        @XposedApiMin(101)
         T newInstance(Object... args) throws InvocationTargetException, IllegalArgumentException, IllegalAccessException, InstantiationException;
 
         /**
@@ -181,6 +202,7 @@ public interface XposedInterface {
          * @see Constructor#newInstance(Object...)
          */
         @NonNull
+        @XposedApiMin(101)
         <U> U newInstanceSpecial(@NonNull Class<U> subClass, Object... args) throws InvocationTargetException, IllegalArgumentException, IllegalAccessException, InstantiationException;
     }
 
@@ -193,11 +215,13 @@ public interface XposedInterface {
          * Gets the method / constructor being hooked.
          */
         @NonNull
+        @XposedApiMin(101)
         Executable getExecutable();
 
         /**
          * Gets the {@code this} pointer for the call, or {@code null} for static methods.
          */
+        @XposedApiMin(101)
         Object getThisObject();
 
         /**
@@ -206,6 +230,7 @@ public interface XposedInterface {
          * arguments.
          */
         @NonNull
+        @XposedApiMin(101)
         List<Object> getArgs();
 
         /**
@@ -216,6 +241,7 @@ public interface XposedInterface {
          * @throws IndexOutOfBoundsException if index is out of bounds
          * @throws ClassCastException        if the argument cannot be cast to the expected type
          */
+        @XposedApiMin(101)
         Object getArg(int index) throws IndexOutOfBoundsException, ClassCastException;
 
         /**
@@ -226,6 +252,7 @@ public interface XposedInterface {
          * <p>For void methods and constructors, always returns {@code null}.</p>
          * @throws Throwable if any interceptor or the original executable throws an exception
          */
+        @XposedApiMin(101)
         Object proceed() throws Throwable;
 
         /**
@@ -237,6 +264,7 @@ public interface XposedInterface {
          * <p>For void methods and constructors, always returns {@code null}.</p>
          * @throws Throwable if any interceptor or the original executable throws an exception
          */
+        @XposedApiMin(101)
         Object proceed(@NonNull Object[] args) throws Throwable;
 
         /**
@@ -249,6 +277,7 @@ public interface XposedInterface {
          * <p>For void methods and constructors, always returns {@code null}.</p>
          * @throws Throwable if any interceptor or the original executable throws an exception
          */
+        @XposedApiMin(101)
         Object proceedWith(@NonNull Object thisObject) throws Throwable;
 
         /**
@@ -262,12 +291,14 @@ public interface XposedInterface {
          * <p>For void methods and constructors, always returns {@code null}.</p>
          * @throws Throwable if any interceptor or the original executable throws an exception
          */
+        @XposedApiMin(101)
         Object proceedWith(@NonNull Object thisObject, @NonNull Object[] args) throws Throwable;
     }
 
     /**
      * Hooker for a method or constructor.
      */
+    @XposedApiMin(101)
     interface Hooker {
         /**
          * Intercepts a method / constructor call.
@@ -279,22 +310,26 @@ public interface XposedInterface {
          * @throws Throwable Throw any exception from the interceptor. The exception will
          *                   propagate to the caller if not caught by any interceptor.
          */
+        @XposedApiMin(101)
         Object intercept(@NonNull Chain chain) throws Throwable;
     }
 
     /**
      * Handle for a hook.
      */
+    @XposedApiMin(101)
     interface HookHandle {
         /**
          * Gets the method / constructor being hooked.
          */
         @NonNull
+        @XposedApiMin(101)
         Executable getExecutable();
 
         /**
          * Cancels the hook. This method is idempotent. It is safe to call this method multiple times.
          */
+        @XposedApiMin(101)
         void unhook();
 
         /**
@@ -302,6 +337,7 @@ public interface XposedInterface {
          */
         @SinceApi(API_102)
         @Nullable
+        @XposedApiMin(102)
         String getId();
 
         /**
@@ -325,6 +361,7 @@ public interface XposedInterface {
          */
         @SinceApi(API_102)
         @NonNull
+        @XposedApiMin(102)
         HookHandle replaceHook(@NonNull Hooker hooker);
     }
 
@@ -332,11 +369,13 @@ public interface XposedInterface {
      * Exception handling mode for hookers. This determines how the framework handles exceptions
      * thrown by hookers. The default mode is {@link ExceptionMode#DEFAULT}.
      */
+    @XposedApiMin(101)
     enum ExceptionMode {
         /**
          * Follows the global exception mode configured in {@code module.prop}. Defaults to {@link #PROTECTIVE}
          * if not specified.
          */
+        @XposedApiMin(101)
         DEFAULT,
 
         /**
@@ -350,18 +389,21 @@ public interface XposedInterface {
          * </p>
          * <p>Exceptions thrown by proceed will always be propagated.</p>
          */
+        @XposedApiMin(101)
         PROTECTIVE,
 
         /**
          * Any exception thrown by the hooker will be propagated to the caller as usual. This mode is
          * recommended for debugging purposes, as it can help you find and fix errors in your hooks.
          */
+        @XposedApiMin(101)
         PASSTHROUGH,
     }
 
     /**
      * Builder for configuring a hook.
      */
+    @XposedApiMin(101)
     interface HookBuilder {
         /**
          * Sets the priority of the hook. Hooks with higher priority will be called before hooks with lower
@@ -370,6 +412,7 @@ public interface XposedInterface {
          * @param priority The priority of the hook
          * @return The builder itself for chaining
          */
+        @XposedApiMin(101)
         HookBuilder setPriority(int priority);
 
         /**
@@ -378,6 +421,7 @@ public interface XposedInterface {
          * @param mode The exception handling mode
          * @return The builder itself for chaining
          */
+        @XposedApiMin(101)
         HookBuilder setExceptionMode(@NonNull ExceptionMode mode);
 
         /**
@@ -390,6 +434,7 @@ public interface XposedInterface {
          * @throws HookFailedError          if hook fails due to framework internal error
          */
         @NonNull
+        @XposedApiMin(101)
         HookHandle intercept(@NonNull Hooker hooker);
 
         /**
@@ -405,12 +450,14 @@ public interface XposedInterface {
          * @return The builder itself for chaining
          */
         @SinceApi(API_102)
+        @XposedApiMin(102)
         HookBuilder setId(@Nullable String id);
     }
 
     /**
      * Gets the runtime Xposed API version. Framework implementations <b>must not</b> override this method.
      */
+    @XposedApiMin(101)
     default int getApiVersion() {
         return LIB_API;
     }
@@ -419,23 +466,27 @@ public interface XposedInterface {
      * Gets the Xposed framework name of current implementation.
      */
     @NonNull
+    @XposedApiMin(101)
     String getFrameworkName();
 
     /**
      * Gets the Xposed framework version of current implementation.
      */
     @NonNull
+    @XposedApiMin(101)
     String getFrameworkVersion();
 
     /**
      * Gets the Xposed framework version code of current implementation.
      */
+    @XposedApiMin(101)
     long getFrameworkVersionCode();
 
     /**
      * Gets the Xposed framework properties.
      * Properties with prefix {@code PROP_RT_} may change among launches.
      */
+    @XposedApiMin(101)
     long getFrameworkProperties();
 
     /**
@@ -445,6 +496,7 @@ public interface XposedInterface {
      * @return The builder for the hook
      */
     @NonNull
+    @XposedApiMin(101)
     HookBuilder hook(@NonNull Executable origin);
 
     /**
@@ -466,6 +518,7 @@ public interface XposedInterface {
      * @return The builder for the hook
      */
     @NonNull
+    @XposedApiMin(101)
     HookBuilder hookClassInitializer(@NonNull Class<?> origin);
 
     /**
@@ -484,6 +537,7 @@ public interface XposedInterface {
      * @param executable The method / constructor to deoptimize
      * @return Indicate whether the deoptimizing succeed or not
      */
+    @XposedApiMin(101)
     boolean deoptimize(@NonNull Executable executable);
 
     /**
@@ -494,6 +548,7 @@ public interface XposedInterface {
      * @return The method invoker
      */
     @NonNull
+    @XposedApiMin(101)
     Invoker<?, Method> getInvoker(@NonNull Method method);
 
     /**
@@ -505,6 +560,7 @@ public interface XposedInterface {
      * @return The constructor invoker
      */
     @NonNull
+    @XposedApiMin(101)
     <T> CtorInvoker<T> getInvoker(@NonNull Constructor<T> constructor);
 
     /**
@@ -514,6 +570,7 @@ public interface XposedInterface {
      * @param tag      The log tag
      * @param msg      The log message
      */
+    @XposedApiMin(101)
     void log(int priority, @Nullable String tag, @NonNull String msg);
 
     /**
@@ -524,12 +581,14 @@ public interface XposedInterface {
      * @param msg      The log message
      * @param tr       An exception to log
      */
+    @XposedApiMin(101)
     void log(int priority, @Nullable String tag, @NonNull String msg, @Nullable Throwable tr);
 
     /**
      * Gets the application info of the module.
      */
     @NonNull
+    @XposedApiMin(101)
     ApplicationInfo getModuleApplicationInfo();
 
     /**
@@ -540,6 +599,7 @@ public interface XposedInterface {
      * @throws UnsupportedOperationException If the framework is embedded
      */
     @NonNull
+    @XposedApiMin(101)
     SharedPreferences getRemotePreferences(@NonNull String group);
 
     /**
@@ -549,6 +609,7 @@ public interface XposedInterface {
      * @throws UnsupportedOperationException If the framework is embedded
      */
     @NonNull
+    @XposedApiMin(101)
     String[] listRemoteFiles();
 
     /**
@@ -560,5 +621,6 @@ public interface XposedInterface {
      * @throws UnsupportedOperationException If the framework is embedded
      */
     @NonNull
+    @XposedApiMin(101)
     ParcelFileDescriptor openRemoteFile(@NonNull String name) throws FileNotFoundException;
 }

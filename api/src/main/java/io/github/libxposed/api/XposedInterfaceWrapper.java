@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 
 import io.github.libxposed.annotation.InternalApi;
 import io.github.libxposed.annotation.SinceApi;
+import io.github.libxposed.api.annotations.XposedApiMin;
 
 /**
  * Wrapper of {@link XposedInterface} used by modules to shield framework implementation details.
@@ -24,6 +25,20 @@ public class XposedInterfaceWrapper implements XposedInterface {
     private Runnable mDetachImpl;
 
     /**
+     * Attaches the framework interface to the module. Modules should never call this method.
+     *
+     * @param base The framework interface
+     */
+    @SuppressWarnings("unused")
+    @XposedApiMin(101)
+    public final void attachFramework(@NonNull XposedInterface base) {
+        if (mBase != null) {
+            throw new IllegalStateException("Framework already attached");
+        }
+        mBase = base;
+    }
+
+    /**
      * Attaches the framework interface to the module. Modules <b>must not</b> call this method.
      * It is reserved for framework implementations and may change without compatibility guarantees.
      *
@@ -32,6 +47,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
      */
     @InternalApi
     @SuppressWarnings("unused")
+    @XposedApiMin(102)
     public final void attachFramework(@NonNull XposedInterface base, @NonNull Runnable detachImpl) {
         if (mBase != null) {
             throw new IllegalStateException("Framework already attached");
@@ -40,6 +56,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
         mDetachImpl = detachImpl;
     }
 
+    @XposedApiMin(101)
     private void ensureAttached() {
         if (mBase == null) {
             throw new IllegalStateException("Framework not attached");
@@ -79,12 +96,14 @@ public class XposedInterfaceWrapper implements XposedInterface {
      */
     @SinceApi(API_102)
     @SuppressWarnings("unused")
+    @XposedApiMin(102)
     public final void detach() {
         ensureAttached();
         mDetachImpl.run();
     }
 
     @Override
+    @XposedApiMin(101)
     public final int getApiVersion() {
         ensureAttached();
         return XposedInterface.super.getApiVersion();
@@ -92,6 +111,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final String getFrameworkName() {
         ensureAttached();
         return mBase.getFrameworkName();
@@ -99,18 +119,21 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final String getFrameworkVersion() {
         ensureAttached();
         return mBase.getFrameworkVersion();
     }
 
     @Override
+    @XposedApiMin(101)
     public final long getFrameworkVersionCode() {
         ensureAttached();
         return mBase.getFrameworkVersionCode();
     }
 
     @Override
+    @XposedApiMin(101)
     public final long getFrameworkProperties() {
         ensureAttached();
         return mBase.getFrameworkProperties();
@@ -118,6 +141,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final HookBuilder hook(@NonNull Executable origin) {
         ensureAttached();
         return mBase.hook(origin);
@@ -125,12 +149,14 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final HookBuilder hookClassInitializer(@NonNull Class<?> origin) {
         ensureAttached();
         return mBase.hookClassInitializer(origin);
     }
 
     @Override
+    @XposedApiMin(101)
     public final boolean deoptimize(@NonNull Executable executable) {
         ensureAttached();
         return mBase.deoptimize(executable);
@@ -138,6 +164,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final Invoker<?, Method> getInvoker(@NonNull Method method) {
         ensureAttached();
         return mBase.getInvoker(method);
@@ -145,18 +172,21 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final <T> CtorInvoker<T> getInvoker(@NonNull Constructor<T> constructor) {
         ensureAttached();
         return mBase.getInvoker(constructor);
     }
 
     @Override
+    @XposedApiMin(101)
     public final void log(int priority, @Nullable String tag, @NonNull String msg) {
         ensureAttached();
         mBase.log(priority, tag, msg);
     }
 
     @Override
+    @XposedApiMin(101)
     public final void log(int priority, @Nullable String tag, @NonNull String msg, @Nullable Throwable tr) {
         ensureAttached();
         mBase.log(priority, tag, msg, tr);
@@ -164,6 +194,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final SharedPreferences getRemotePreferences(@NonNull String name) {
         ensureAttached();
         return mBase.getRemotePreferences(name);
@@ -171,6 +202,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final ApplicationInfo getModuleApplicationInfo() {
         ensureAttached();
         return mBase.getModuleApplicationInfo();
@@ -178,6 +210,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final String[] listRemoteFiles() {
         ensureAttached();
         return mBase.listRemoteFiles();
@@ -185,6 +218,7 @@ public class XposedInterfaceWrapper implements XposedInterface {
 
     @NonNull
     @Override
+    @XposedApiMin(101)
     public final ParcelFileDescriptor openRemoteFile(@NonNull String name) throws FileNotFoundException {
         ensureAttached();
         return mBase.openRemoteFile(name);
