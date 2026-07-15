@@ -283,7 +283,9 @@ public interface XposedInterface {
      */
     interface Hooker {
         @XposedApiMin(101)
-        Object intercept(@NonNull Chain chain) throws Throwable;
+        default Object intercept(@NonNull Chain chain) throws Throwable {
+            return chain.proceed();
+        };
     }
 
     /**
